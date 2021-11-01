@@ -13,21 +13,59 @@ docx = read_docx(url)
 data2 = docx_extract_tbl(docx,
                          tbl_number = 1,
                          header = TRUE)
+data2$MAT = as.numeric(data2$MAT)
+data2$MAP = as.numeric(data2$MAP)
+
+
 #get location-code to location index from txt 
-url = "https://dryad-assetstore-merritt-west.s3.us-west-2.amazonaws.com/ark%3A/13030/m5w15m21%7C1%7Cproducer/Readme_LeafDamage_NutNet.txt?response-content-type=text%2Fplain&X-Amz-Security-Token=IQoJb3JpZ2luX2VjEPv%2F%2F%2F%2F%2F%2F%2F%2F%2F%2FwEaCXVzLXdlc3QtMiJHMEUCIHkdgZETSG%2BogQ5dX%2FONv0Qwy2wgBr%2Bjb5PPNgUE0m2lAiEAuwIakyu11urNsMcPHckBux%2FJegsRbtkavTyRrAeLNVEqgwQIlP%2F%2F%2F%2F%2F%2F%2F%2F%2F%2FARAAGgw0NTE4MjY5MTQxNTciDO%2Flkj2JUaU%2F4TJEzyrXA4cgjas16cCLcgoYw9pZzhjQkK9%2FiKfdeuYAlnnaxe6QH4jnFgStJ1M4gD0IvfFby65zlAunRnVJzclSp500P4c5G1R89etGbkUYjNmrD%2FoHpk3E3SXnKHR%2BXa9E1Gdpe8x9rHq15m0FaV%2FRbIXJ7LOHUt5zAZDdL8ZThuph%2FwSPOrwlRaTrELqzN96SDrpVQJ615W4zFlRINxWEKzjX%2Bm94yhE91ayTcGyfsW1%2BNzTw9q80dA4pRG6fEFxsNDMycxqQ%2Bc8%2BGLPL8x84fPvXJGiU0nTsFS4fh8kaCaoznncw2VqsWpJ%2BVtlSEJoIGYSyMzVGruTQN83UOSCJaRkXAySm9f8m2tVF%2BFcHv%2BBOqxfPJ6YWiNIJLV00kZtzg%2FM2Jwwj7FHD8a%2BKKiWV%2FXQeNjuGxRXYnQd0q6CKnGv9dsZIF%2B1JAOm58JaYpeQHWbXSy3QQ6j8jhmtdW8zfqgb7s7Uns9duKvOKOqppag%2BduMctFgVByB%2BFHb9pH9MifIAllcw8XMhOD0bbdbAg9h6LZ6jNRx9rxKoXqsiYcsbVj8UN8UIRjesAZD4to9sVV5XCTi0ouKXsTP%2BYnSxOu0dow9ETegoEirTwrCMY%2BPyFjd30Udmq48CI6jDCyOaLBjqlAR9nGCHI%2B1rysoz1Vpj3ItdCdnQk%2FhVF5x97do%2FxDxiUJrZsLyO0%2FWVjRfSOFlqAGaiA7ooGS1oVW29t3l2%2F7fmy1%2FQA8iiguwwf7SUpMr2XPTqKQhrGMe1F%2B0RWHPz6D2ZWh4B51u6TI6f1PHxgyOUNeQcmwoqB1yfVboo3RgXxjRrw9b72yBW%2F2ma9Nd1J89n6NCujSu%2BnaPZf7e%2BBLzNGXM%2FU5Q%3D%3D&X-Amz-Algorithm=AWS4-HMAC-SHA256&X-Amz-Date=20211027T195736Z&X-Amz-SignedHeaders=host&X-Amz-Expires=14400&X-Amz-Credential=ASIAWSMX3SNW4RCH5OYH%2F20211027%2Fus-west-2%2Fs3%2Faws4_request&X-Amz-Signature=8c279fff4e372764eb37c71b4eeb9b5b83e64704d65f3b6f5091a8dbf5d6dddb"
-data3 = read.table(url, sep = "=",
-                   skip = 117, nrows = 27)
+# url = "https://dryad-assetstore-merritt-west.s3.us-west-2.amazonaws.com/ark%3A/13030/m5w15m21%7C1%7Cproducer/Readme_LeafDamage_NutNet.txt?response-content-type=text%2Fplain&X-Amz-Security-Token=IQoJb3JpZ2luX2VjEHEaCXVzLXdlc3QtMiJHMEUCIDFDO6X2GbaXPTMk%2BnT9TZpuGVEy5PT%2FZgZ%2FDAXrBnmBAiEAvX6WLrDudiyBGjcpJFkhovNyE%2FGl7TOjFj755jRCdWkq%2BgMIGhAAGgw0NTE4MjY5MTQxNTciDEWjpSHcN%2FtxAPZTKSrXAxGSSbfD5rLavVkvEVMyzgB7oHklFz6TbYCwuk693tbTMYJtbb3g4Unz9Dx5Sq8PT9CnqHU3F06gBvJ5QZAwfDLr3lfp9iXIziqtaHfuM5CnSfetmEGvWb%2BLNf9vCeKuF2HiY58f9jFclUQaGy499wSw7On77Scy0AlnJXYBTlku6H%2FwNdhAwJUCc%2FYMNTw5JfKTFuz%2Bt4EqE98vnKVxdcOK9QKAdV6NknF%2BJgo8YQK6tDcqc9nrQCLqX7k62bABa50PnX%2F6qxAdEjajIAmoZegTjnOtpgbH9VXsrzq1jhNEdNwadL8DY3TMDoL0o5D47JfznRyzEzXXC00RQkoWCAiFUgz3b2MhERR2XYrklYRQuSF1yn8FHvQsUy6T7P8p%2Bt38sKkxy6kXsCtH1rxpqDAtQZcwI6ByVGmHc7XPWErH3rywxMgpQ%2Fe1w94Vr%2BRKl7JqmIZ8UFgFAh0UNttI65PTPO%2BwjrcSjph%2Bb5fOnHZSrr1V8ztSkMoOqYvtjj75uHUtw%2BJSS7OXmTiZrUpazckPX4FeKuDRnYE%2FNL2IVELgIa3H4ZEVuF2mlJzC2ZG7B%2B%2FgUnJSD4Zli2nzavBHttS9MmchX35m1ragZ763N4cqlok0FcmsHzCoroCMBjqlAcxpU48nKcqVAFWmO0p9sr8QAVp%2F284JAT1RhH1s2g6mhhCyPJEys%2BvMQZCHFI3JCjRXeuhyhVnQQPB0gjcseSMwPJbuoDnyp2HAsXqp2dzWV506%2FgNPyFsoiJ%2Bjz%2FBZECCq0pVUO4G3AmlzzJSqLBGxqXUoLVsYdGHwuSZ0v03rlWYBtMdfp%2FwkxsLNMynbat%2BNOSe9GIlQANxCRRpp%2B2Bh7Lh25A%3D%3D&X-Amz-Algorithm=AWS4-HMAC-SHA256&X-Amz-Date=20211101T172800Z&X-Amz-SignedHeaders=host&X-Amz-Expires=14400&X-Amz-Credential=ASIAWSMX3SNWTFCZX5RH%2F20211101%2Fus-west-2%2Fs3%2Faws4_request&X-Amz-Signature=008519f6c9e36265350b5fa4a20786eb648bc291b2e5a745caf8ea6ca4541582"
+# data3 = read.table(url, sep = "=",
+#                    skip = 117, nrows = 27)
+data3=as.data.frame(matrix(c("badlau.de"  ,"Bad",
+                             "bari.ar"    ,"For",
+                             "bnch.us"    ,"Bun",
+                             "bogong.au"  ,"Bog",
+                             "burrawan.au","Bur",
+                             "cbgb.us"    ,"Chi",
+                             "cdcr.us"    ,"Ced",
+                             "chilcas.ar" ,"Las",
+                             "comp.pt"    ,"Com",
+                             "frue.ch"    ,"Fru",
+                             "jena.de"    ,"JeN",
+                             "kibber.in"  ,"Kib",
+                             "kilp.fi"    ,"Kil",
+                             "koffler.ca" ,"Kof",
+                             "konz.us"    ,"Kon",
+                             "marc.ar"    ,"Mar",
+                             "mcla.us"    ,"Mcl",
+                             "mtca.au"    ,"Mt.",
+                             "potrok.ar"  ,"Pot",
+                             "saline.us"  ,"Sal",
+                             "sgs.us"     ,"Sho",
+                             "shps.us"    ,"She",
+                             "spin.us"    ,"Spi",
+                             "temple.us"  ,"Tem",
+                             "ukul.za"    ,"Uku",
+                             "valm.ch"    ,"Val",
+                             "yarra.au"   ,"Yar"),
+                             nrow=27,ncol=2,byrow=TRUE)) 
+colnames(data3) = c("code","ind")
 
 
-data3$V2 = data3$V2 %>% str_replace(" ", "")
-data3$V1 = data3$V1 %>% str_replace("\t", "")
+#data3$V2 = data3$V2 %>% str_replace(" ", "")
+#data3$V1 = data3$V1 %>% str_replace("\t", "")
 
 data2$ind = str_sub(data2$Site.Name,1,3)
-data3$ind = str_sub(data3$V2,1,3)
+#data3$ind = str_sub(data3$V2,1,3)
 
 for (i in 1:27) { 
-data$site = data$site %>% str_replace(data3[i,1], data3[i,3])
+data$site = data$site %>% str_replace(data3[i,1], data3[i,2])
 }
+
+#scaling climate variables
+data2$MAT = scale(data2$MAT)
+data2$MAP = scale(data2$MAP)
+
 
 #after some string juggling, MAT & MAP are included to the main data (cheers Anne!)
 data$MAT = data2$MAT[match(data$site, data2$ind)]
