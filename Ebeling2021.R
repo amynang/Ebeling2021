@@ -1,6 +1,6 @@
 library(docxtractr)
 library(tidyverse);library(reshape2);library(stringr)
-library(glmmTMB)
+library(glmmTMB);library(DHARMa)
 
 #authors have helpfully split the necessary data to 3 different places:
 #get the data from dryad
@@ -71,4 +71,33 @@ data2$MAP = scale(data2$MAP)
 data$MAT = data2$MAT[match(data$site, data2$ind)]
 data$MAP = data2$MAP[match(data$site, data2$ind)]
 
+data$site = as.factor(data$site)
+data$plot = as.factor(data$plot)
+data$taxon = as.factor(data$taxon)
+data$experimental_treatment = as.factor(data$experimental_treatment)
+data = within(data, site.plot.taxon <- factor(site:plot:taxon))
+data$functional_group = factor(data$functional_group, levels = c("GRASS","LEGUME","FORB","WOODY"))
 
+str(data)
+
+#these are all sloppy, reread methods!!!
+m1 = glmmTMB(log(invert_damage.perc+1) ~ 
+               experimental_treatment*MAT*MAP
+             + (1|site),
+             data = data)
+summary(m1)
+
+m2 = glmmTMB(log(invert_damage.perc+1) ~ 
+               experimental_treatment*functional_group
+             + (1|site)
+             + (1|taxon)
+             + (1|site.plot.taxon),
+             data = data)
+summary(m2)
+
+
+m2 = glmmTMB(log(invert_damage.perc+1) ~ 
+               experimental_treatment*functional_group
+             + (1|site/plot/taxon),
+             data = data)
+summary(m2)
