@@ -67,7 +67,7 @@ data2$MAT = scale(data2$MAT)
 data2$MAP = scale(data2$MAP)
 
 
-#after some string juggling, MAT & MAP are included to the main data (cheers Anne!)
+#after some string juggling, MAT & MAP are included to the main data
 data$MAT = data2$MAT[match(data$site, data2$ind)]
 data$MAP = data2$MAP[match(data$site, data2$ind)]
 
@@ -79,6 +79,21 @@ data = within(data, site.plot.taxon <- factor(site:plot:taxon))
 data$functional_group = factor(data$functional_group, levels = c("GRASS","LEGUME","FORB","WOODY"))
 
 str(data)
+
+#aaaaaaaaargh
+com.data = data %>% group_by(site,
+                             MAT,
+                             MAP,
+                             year_sampling,
+                             treatment_year,
+                             plot,
+                             experimental_treatment,
+                             taxon,
+                             functional_group,
+                             taxon_cover.plot) %>% summarise(tot.inv.damage = sum(invert_damage.perc),
+                                                             tot.pat.damage = sum(pathogen_damage.perc))
+
+table(data$site, data$year_sampling)
 
 #these are all sloppy, reread methods!!!
 m1 = glmmTMB(log(invert_damage.perc+1) ~ 
